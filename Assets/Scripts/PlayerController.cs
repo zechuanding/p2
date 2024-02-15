@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
      * 
      * Consider adding coyote jump and jump input buffer
      */
+    PlayerStateList ps;
     private Rigidbody2D rb;
 
     [Header("Horizontal Movement Settings")]
@@ -17,10 +18,20 @@ public class PlayerController : MonoBehaviour
     [Header("Jump Settings")]
     [SerializeField] private float jumpForce = 45;
     [SerializeField] private Transform groundCheckPoint;
-    [SerializeField] private float groundCheckDist = 0.2f;
-    [SerializeField] private float groundCheckXPos = 0.5f;
+    [SerializeField] private float groundCheckDist = 0.1f;
+    [SerializeField] private float groundCheckXPos = 0.4f;
     [SerializeField] private LayerMask jumpCheckLayerMask;
+    // Jump input buffer
+    private int jumpBufferCounter = 0;
+    [SerializeField] private int bufferFrames = 6;
+    // Coyote jump
+    private float coyoteTimeCounter = 0;
+    [SerializeField] private float coyoteTime = 0.2f;
 
+    [SerializeField] private GameObject AuroraPlatformPrefab;
+
+
+    // Singleton
     public static PlayerController Instance;
 
     private void Awake()
@@ -40,6 +51,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ps = GetComponent<PlayerStateList>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -47,8 +59,10 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         GetInputs();
+        UpdateJumpingState();
         Move();
         Jump();
+        CreatePlatform();
     }
 
     void GetInputs()
@@ -62,7 +76,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Check Player on the Ground
-    public bool Grounded()
+    public bool PlayerOnGround()
     {
         if (Physics2D.Raycast(groundCheckPoint.position, Vector2.down, groundCheckDist, jumpCheckLayerMask)
             || Physics2D.Raycast(groundCheckPoint.position + new Vector3(groundCheckXPos, 0, 0), Vector2.down, groundCheckDist, jumpCheckLayerMask)
@@ -76,6 +90,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+    // Variable height jump
     void Jump()
     {
         // Cancel Jump when button released
@@ -84,15 +100,49 @@ public class PlayerController : MonoBehaviour
             if (rb.velocity.y > 0)
             {
                 rb.velocity = new Vector2(rb.velocity.x, 0);
+                //ps.jumping = false;
             }
+        }
+
+        if (!ps.jumping)
+        {
+            if (jumpBufferCounter > 0 && coyoteTimeCounter > 0)
+            {
+                Debug.Log("jumped with buffer count: " + jumpBufferCounter + " and coyoteTimeCounter: " + coyoteTimeCounter);
+                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                ps.jumping = true;
+            }
+        }
+    }
+
+    void UpdateJumpingState()
+    {
+        if (PlayerOnGround())
+        {
+            ps.jumping = false;
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
         }
 
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Z))
         {
-            if (Grounded())
-            {
-                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            }
+            jumpBufferCounter = bufferFrames;
+        }
+        else
+        {
+            jumpBufferCounter--;
+        }
+    }
+
+
+    void CreatePlatform()
+    {
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            Instantiate(AuroraPlatformPrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
         }
     }
 }
