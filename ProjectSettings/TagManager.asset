@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Creature
+  - Enemy
+  - Player Attack
+  - Check Point
+  - Collectible
   layers:
   - Default
   - TransparentFX
@@ -11,10 +16,10 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - AuroraPlatform
+  - Creature
+  - Player
+  - Collectible
   - 
   - 
   - 
@@ -40,4 +45,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Enemy
+    uniqueID: 440553025
+    locked: 0
+  - name: Player
+    uniqueID: 242535199
+    locked: 0
+  - name: Attack
+    uniqueID: 3694588807
     locked: 0

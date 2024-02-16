@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    /* TO DO:
-     * 
-     * Consider adding coyote jump and jump input buffer
-     */
+
     PlayerStateList ps;
     private Rigidbody2D rb;
 
@@ -18,17 +15,22 @@ public class PlayerController : MonoBehaviour
     [Header("Jump Settings")]
     [SerializeField] private float jumpForce = 45;
     [SerializeField] private Transform groundCheckPoint;
-    [SerializeField] private float groundCheckDist = 0.1f;
+    [SerializeField] private float groundCheckDist = 0.05f;
     [SerializeField] private float groundCheckXPos = 0.4f;
     [SerializeField] private LayerMask jumpCheckLayerMask;
     // Jump input buffer
-    private int jumpBufferCounter = 0;
-    [SerializeField] private int bufferFrames = 6;
+    private float jumpBufferCounter = 0;
+    [SerializeField] private float jumpBufferTime = 0.1f;
     // Coyote jump
     private float coyoteTimeCounter = 0;
     [SerializeField] private float coyoteTime = 0.2f;
 
     [SerializeField] private GameObject AuroraPlatformPrefab;
+
+    public Vector3 facing = Vector3.right;
+
+    private bool canMove = true;
+    private int numMoveRestricts = 0;
 
 
     // Singleton
@@ -58,19 +60,37 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        canMove = numMoveRestricts <= 0;
         GetInputs();
         UpdateJumpingState();
-        Move();
+        Walk();
         Jump();
         CreatePlatform();
+        Cheat();
     }
+
+
+    public void AddMoveRestrict() { numMoveRestricts++; }
+    public void RemoveMoveRestrict() { numMoveRestricts--; }
+    public void ClearAllMoveRestrict() { numMoveRestricts = 0; }
+
+
+
 
     void GetInputs()
     {
-        xAxis = Input.GetAxisRaw("Horizontal");
+        if (canMove)
+        {
+            xAxis = Input.GetAxisRaw("Horizontal");
+            facing = xAxis > 0 ? Vector3.right : (xAxis < 0 ? Vector3.left : facing);
+        }
+        else
+        {
+            xAxis = 0;
+        }
     }
 
-    void Move()
+    void Walk()
     {
         rb.velocity = new Vector2(walkSpeed * xAxis, rb.velocity.y);
     }
@@ -95,12 +115,12 @@ public class PlayerController : MonoBehaviour
     void Jump()
     {
         // Cancel Jump when button released
-        if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.Z))
+        if (Input.GetButtonUp("Jump"))
         {
             if (rb.velocity.y > 0)
             {
                 rb.velocity = new Vector2(rb.velocity.x, 0);
-                //ps.jumping = false;
+                coyoteTimeCounter = 0;
             }
         }
 
@@ -111,6 +131,7 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("jumped with buffer count: " + jumpBufferCounter + " and coyoteTimeCounter: " + coyoteTimeCounter);
                 rb.velocity = new Vector2(rb.velocity.x, jumpForce);
                 ps.jumping = true;
+                jumpBufferCounter = 0;
             }
         }
     }
@@ -127,9 +148,9 @@ public class PlayerController : MonoBehaviour
             coyoteTimeCounter -= Time.deltaTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Z))
+        if (canMove && Input.GetButtonDown("Jump"))
         {
-            jumpBufferCounter = bufferFrames;
+            jumpBufferCounter = jumpBufferTime;
         }
         else
         {
@@ -138,11 +159,37 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    bool hasPlatformAbility = true;
     void CreatePlatform()
     {
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (canMove & hasPlatformAbility && Input.GetKeyDown(KeyCode.DownArrow))
         {
-            Instantiate(AuroraPlatformPrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
+            int platformCost = 25;
+            if (PlayerStats.Instance.MP.Get() >= platformCost)
+            {
+                PlayerStats.Instance.MP.Add(-platformCost);
+                Instantiate(AuroraPlatformPrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
+            } 
+            else if (cheatMode)
+            {
+                Instantiate(AuroraPlatformPrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
+            }
         }
     }
+
+
+    public bool cheatMode = false;
+    void Cheat()
+    {
+        if (Input.GetKeyDown("1"))
+        {
+            cheatMode = !cheatMode;
+            if (cheatMode)
+            {
+                PlayerStats.Instance.MP.Maximize();
+            }
+        }
+    }
+
+
 }
