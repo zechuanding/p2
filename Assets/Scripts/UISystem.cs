@@ -5,16 +5,13 @@ using UnityEngine.UI;
 
 public class UISystem : MonoBehaviour
 {
-    GameObject Player;
-    PlayerHealth playerHealth;
 
     [SerializeField] Text healthText;
     [SerializeField] Text guideText;
 
     private void Awake()
     {
-        Player = GameObject.Find("Player");
-        playerHealth = Player.GetComponent<PlayerHealth>();
+        EventBus.Subscribe<UIEvent>(DisplayGuideWrapper);
     }
 
 
@@ -26,19 +23,38 @@ public class UISystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        healthText.text = "Health: " + playerHealth.HP.Get();
+        healthText.text = "Health: " + PlayerHealth.Instance.HP.Get();
         healthText.text += "\nMP: " + PlayerStats.Instance.MP.Get();
         healthText.text += PlayerController.Instance.cheatMode ? "\nCHEAT MODE ON" : "";
     }
 
-    IEnumerator DisplayGuide()
+    void DisplayGuideWrapper(UIEvent e)
     {
-        //guideText.text = e.guideText;
-        while (true)
-        {   
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return)) { break; }
-            yield return null;
+        StartCoroutine(DisplayGuide(e));
+    }
+    IEnumerator DisplayGuide(UIEvent e)
+    {
+        for (int i = 0; i < e.eventText.Length; i++)
+        {
+            guideText.text = e.eventText[i];
+            guideText.text += "\n\n~Press ENTER to continue~";
+            Debug.Log("displaying message "+i);
+            while (true)
+            {
+                yield return null;
+                if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return)) { break; }
+            }
         }
+        
         guideText.text = "";
+    }
+}
+
+public class UIEvent
+{
+    public string[] eventText;
+    public UIEvent(string[] _text)
+    {
+        eventText = _text;
     }
 }

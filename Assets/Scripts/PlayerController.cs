@@ -69,14 +69,14 @@ public class PlayerController : MonoBehaviour
         Cheat();
     }
 
-
+    // ================================== MOVE RESTRICTIONS ==================================
     public void AddMoveRestrict() { numMoveRestricts++; }
     public void RemoveMoveRestrict() { numMoveRestricts--; }
     public void ClearAllMoveRestrict() { numMoveRestricts = 0; }
 
 
 
-
+    // ================================== WALK ==================================
     void GetInputs()
     {
         if (canMove)
@@ -95,6 +95,8 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2(walkSpeed * xAxis, rb.velocity.y);
     }
 
+
+    // ================================== JUMP ==================================
     // Check Player on the Ground
     public bool PlayerOnGround()
     {
@@ -109,7 +111,6 @@ public class PlayerController : MonoBehaviour
             return false;
         }
     }
-
 
     // Variable height jump
     void Jump()
@@ -158,8 +159,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-    bool hasPlatformAbility = true;
+    // ================================== Platform ==================================
+    bool hasPlatformAbility = false;
     void CreatePlatform()
     {
         if (canMove & hasPlatformAbility && Input.GetKeyDown(KeyCode.DownArrow))
@@ -177,7 +178,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
+    // ================================== CHEAT ==================================
     public bool cheatMode = false;
     void Cheat()
     {
@@ -187,6 +188,26 @@ public class PlayerController : MonoBehaviour
             if (cheatMode)
             {
                 PlayerStats.Instance.MP.Maximize();
+            }
+        }
+    }
+
+
+    // ================================== CHEAT ==================================
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Collectible"))
+        {
+            if (collision.name == "Platform Skill Pickup")
+            {
+                hasPlatformAbility = true;
+                Destroy(collision.gameObject);
+                string[] messageList = new string[] {
+                    "You acquired a new skill: Aurora Platform",
+                    "When in the air, press DOWN arrow to create a platform",
+                    "It will cost your MP, so use wisely"
+                };
+                EventBus.Publish(new UIEvent(messageList));
             }
         }
     }

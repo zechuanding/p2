@@ -10,3 +10,4 @@ public class PlayerTriggerEvent
         collision = _collision;
     }
 }
+

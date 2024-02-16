@@ -14,8 +14,19 @@ public class PlayerHealth : MonoBehaviour
 
     GameObject checkPoint;
 
+    // Singleton
+    public static PlayerHealth Instance;
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+
         HP = new Stat(5);
     }
 
