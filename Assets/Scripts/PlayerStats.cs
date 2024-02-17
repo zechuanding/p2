@@ -20,12 +20,12 @@ public class PlayerStats : MonoBehaviour
             Instance = this;
         }
 
-        MP = new Stat(50);
+        MP = new Stat(100);
         ATK = new Stat(5);
     }
     void Start()
     {
-        
+        StartCoroutine(AutoRefillMP());
     }
 
 
@@ -47,5 +47,15 @@ public class PlayerStats : MonoBehaviour
         ATK.Save();
     }
 
+    [SerializeField] float refillInterval = 1;
+    IEnumerator AutoRefillMP()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(refillInterval);
+            if (PlayerHealth.Instance.IsAlive())
+                MP.Add(1);
+        }
+    }
 
 }

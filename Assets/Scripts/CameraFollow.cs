@@ -10,7 +10,7 @@ public class CameraFollow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        transform.position = PlayerController.Instance.gameObject.transform.position;
     }
 
     // Update is called once per frame

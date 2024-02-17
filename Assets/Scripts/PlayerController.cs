@@ -160,10 +160,11 @@ public class PlayerController : MonoBehaviour
     }
 
     // ================================== Platform ==================================
-    bool hasPlatformAbility = false;
+    public bool hasPlatformAbility = false;
+    [SerializeField] private LayerMask groundLayerMask;
     void CreatePlatform()
     {
-        if (canMove & hasPlatformAbility && Input.GetKeyDown(KeyCode.DownArrow))
+        if (canMove & hasPlatformAbility && Input.GetKeyDown(KeyCode.DownArrow) && !Physics2D.Raycast(transform.position, Vector2.down, 1.5f, groundLayerMask))
         {
             int platformCost = 25;
             if (PlayerStats.Instance.MP.Get() >= platformCost)
@@ -194,23 +195,7 @@ public class PlayerController : MonoBehaviour
 
 
     // ================================== CHEAT ==================================
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Collectible"))
-        {
-            if (collision.name == "Platform Skill Pickup")
-            {
-                hasPlatformAbility = true;
-                Destroy(collision.gameObject);
-                string[] messageList = new string[] {
-                    "You acquired a new skill: Aurora Platform",
-                    "When in the air, press DOWN arrow to create a platform",
-                    "It will cost your MP, so use wisely"
-                };
-                EventBus.Publish(new UIEvent(messageList));
-            }
-        }
-    }
+    
 
 
 }

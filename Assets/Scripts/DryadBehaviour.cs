@@ -5,21 +5,19 @@ using UnityEngine;
 public class DryadBehaviour : CreatureBehaviour
 {
 
-    Rigidbody2D rb;
-    Vector3 direction = Vector3.right;
     [SerializeField] float walkSpeed = 4.0f;
 
     [SerializeField] private LayerMask groundCheckLayerMask;
     [SerializeField] private LayerMask WallCheckLayerMask;
 
     // Start is called before the first frame update
-    void Start()
+    public override void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
+        base.Awake();
+        direction = Vector3.right;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Move()
     {
         if (canMove)
         {

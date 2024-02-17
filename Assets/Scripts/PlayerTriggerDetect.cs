@@ -9,3 +9,12 @@ public class PlayerTriggerDetect : MonoBehaviour
         EventBus.Publish<PlayerTriggerEvent>(new PlayerTriggerEvent(collision));
     }
 }
+
+public class PlayerTriggerEvent
+{
+    public Collider2D collision;
+    public PlayerTriggerEvent(Collider2D _collision)
+    {
+        collision = _collision;
+    }
+}

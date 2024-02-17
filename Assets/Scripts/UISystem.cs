@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,8 +24,8 @@ public class UISystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        healthText.text = "Health: " + PlayerHealth.Instance.HP.Get();
-        healthText.text += "\nMP: " + PlayerStats.Instance.MP.Get();
+        healthText.text = "Health: " + PlayerHealth.Instance.HP.Get()  + "/" + PlayerHealth.Instance.HP.GetMax();
+        healthText.text += "\nMP: " + PlayerStats.Instance.MP.Get() + "/" + PlayerStats.Instance.MP.GetMax();
         healthText.text += PlayerController.Instance.cheatMode ? "\nCHEAT MODE ON" : "";
     }
 
@@ -34,15 +35,43 @@ public class UISystem : MonoBehaviour
     }
     IEnumerator DisplayGuide(UIEvent e)
     {
+        guideText.color = new Color(1, 1, 1, 0);
         for (int i = 0; i < e.eventText.Length; i++)
         {
             guideText.text = e.eventText[i];
-            guideText.text += "\n\n~Press ENTER to continue~";
+            if (!e.temporal)
+                guideText.text += "\n\n~Press ENTER to continue~";
+
+
             Debug.Log("displaying message "+i);
-            while (true)
+
+            // Fade in
+            for (int a = 0; a < 10; a++)
             {
+                guideText.color += new Color(0, 0, 0, 0.1f);
                 yield return null;
-                if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return)) { break; }
+                yield return null;
+            }
+
+            if (e.temporal)
+            {
+                yield return new WaitForSeconds(1);
+            }
+            else
+            {
+                while (true)
+                {
+                    yield return null;
+                    if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return)) { break; }
+                }
+            }
+            
+            // Fade out
+            for (int a = 0; a < 10; a++)
+            {
+                guideText.color += new Color(0, 0, 0, -0.1f);
+                yield return null;
+                yield return null;
             }
         }
         
@@ -53,8 +82,10 @@ public class UISystem : MonoBehaviour
 public class UIEvent
 {
     public string[] eventText;
-    public UIEvent(string[] _text)
+    public bool temporal;
+    public UIEvent(string[] _text, bool _temporal=false)
     {
         eventText = _text;
+        temporal = _temporal;
     }
 }

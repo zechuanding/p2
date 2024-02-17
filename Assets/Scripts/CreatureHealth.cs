@@ -5,13 +5,15 @@ using UnityEngine;
 
 public class CreatureHealth : MonoBehaviour
 {
-    [SerializeField] private int health = 20;
+    [SerializeField] public int health = 20;
     SpriteRenderer sr;
+    CreatureBehaviour behaviour;
 
     // Start is called before the first frame update
     void Start()
     {
         sr = GetComponent<SpriteRenderer>();
+        behaviour = GetComponent<CreatureBehaviour>();
     }
 
     // Update is called once per frame
@@ -19,7 +21,7 @@ public class CreatureHealth : MonoBehaviour
     {
         if (health <= 0)
         {
-            gameObject.SetActive(false);
+            Dies();
         }
     }
 
@@ -42,5 +44,11 @@ public class CreatureHealth : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
         
+    }
+
+    void Dies()
+    {
+        behaviour.alive = false;
+        sr.enabled = false;
     }
 }

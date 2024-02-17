@@ -3,23 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Stat
 {
-    int savedMaxVal;
+    int initialMaxVal;
     int val;
     int maxVal;
+    int savedVal;
 
     // Constructor
     public Stat(int n)
     {
-        savedMaxVal = n;
+        initialMaxVal = n;
         val = n;
         maxVal = n;
     }
     public int Get() { return val; }
+    public int GetMax() { return maxVal; }
     public void Add(int amount)
     {
         val += amount;
         if (val > maxVal) val = maxVal;
         else if (val < 0) val = 0;
+    }
+
+    public void AddMax(int amount)
+    {
+        maxVal += amount;
     }
 
     public void Maximize()
@@ -29,11 +36,10 @@ public class Stat
 
     public void Save()
     {
-        savedMaxVal = maxVal;
+        savedVal = val;
     }
     public void Load()
     {
-        maxVal = savedMaxVal;
-        val = maxVal;
+        val = savedVal;
     }
 }
