@@ -9,6 +9,11 @@ public class UISystem : MonoBehaviour
 
     [SerializeField] Text healthText;
     [SerializeField] Text guideText;
+    [SerializeField] Image MPBar;
+    float MPFraction;
+
+    [SerializeField] Image[] heartArray;
+
 
     private void Awake()
     {
@@ -21,17 +26,37 @@ public class UISystem : MonoBehaviour
         guideText.text = "";
     }
 
+    int HP;
     // Update is called once per frame
     void Update()
     {
-        healthText.text = "Health: " + PlayerHealth.Instance.HP.Get()  + "/" + PlayerHealth.Instance.HP.GetMax();
-        healthText.text += "\nMP: " + PlayerStats.Instance.MP.Get() + "/" + PlayerStats.Instance.MP.GetMax();
+        HP = PlayerHealth.Instance.HP.Get();
+
+        healthText.text = "MP: " + PlayerStats.Instance.MP.Get() + "/" + PlayerStats.Instance.MP.GetMax();
+        healthText.text += "\nHealth: " + HP + "/" + PlayerHealth.Instance.HP.GetMax();
         healthText.text += PlayerController.Instance.cheatMode ? "\nCHEAT MODE ON" : "";
+
+        MPFraction = (float)PlayerStats.Instance.MP.Get() / (float)PlayerStats.Instance.MP.GetMax();
+        MPBar.rectTransform.sizeDelta = new Vector2(200 * MPFraction, 12);
+
+
+        if (heartArray.Length > 0)
+        {
+            for (int i = 0; i < heartArray.Length; i++)
+            {
+                    heartArray[i].enabled = i < HP;
+            }
+        }
     }
 
+    Coroutine c;
     void DisplayGuideWrapper(UIEvent e)
     {
-        StartCoroutine(DisplayGuide(e));
+        if (c != null)
+        {
+            StopCoroutine(c);   // Overwrite the previous guide text
+        }
+        c = StartCoroutine(DisplayGuide(e));
     }
     IEnumerator DisplayGuide(UIEvent e)
     {

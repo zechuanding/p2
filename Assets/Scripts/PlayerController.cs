@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
 
     PlayerStateList ps;
     private Rigidbody2D rb;
+    SpriteRenderer sr;
 
     [Header("Horizontal Movement Settings")]
     [SerializeField] private float walkSpeed = 1;
@@ -30,6 +32,7 @@ public class PlayerController : MonoBehaviour
     public Vector3 facing = Vector3.right;
 
     private bool canMove = true;
+    public bool GetCanMove() { return canMove; }
     private int numMoveRestricts = 0;
 
 
@@ -55,6 +58,7 @@ public class PlayerController : MonoBehaviour
     {
         ps = GetComponent<PlayerStateList>();
         rb = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -79,20 +83,18 @@ public class PlayerController : MonoBehaviour
     // ================================== WALK ==================================
     void GetInputs()
     {
+        xAxis = Input.GetAxisRaw("Horizontal");
         if (canMove)
         {
-            xAxis = Input.GetAxisRaw("Horizontal");
             facing = xAxis > 0 ? Vector3.right : (xAxis < 0 ? Vector3.left : facing);
-        }
-        else
-        {
-            xAxis = 0;
+            sr.flipX = facing == Vector3.left;
         }
     }
 
     void Walk()
     {
-        rb.velocity = new Vector2(walkSpeed * xAxis, rb.velocity.y);
+        if (canMove)
+            rb.velocity = new Vector2(walkSpeed * xAxis, rb.velocity.y);
     }
 
 
@@ -164,16 +166,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundLayerMask;
     void CreatePlatform()
     {
-        if (canMove & hasPlatformAbility && Input.GetKeyDown(KeyCode.DownArrow) && !Physics2D.Raycast(transform.position, Vector2.down, 1.5f, groundLayerMask))
+        if (canMove & hasPlatformAbility && (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.K)) && !Physics2D.Raycast(transform.position, Vector2.down, 1.5f, groundLayerMask))
         {
             int platformCost = 25;
-            if (PlayerStats.Instance.MP.Get() >= platformCost)
+
+            if (cheatMode)
+            {
+                Instantiate(AuroraPlatformPrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
+            }
+            else if (PlayerStats.Instance.MP.Get() >= platformCost)
             {
                 PlayerStats.Instance.MP.Add(-platformCost);
-                Instantiate(AuroraPlatformPrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
-            } 
-            else if (cheatMode)
-            {
                 Instantiate(AuroraPlatformPrefab, transform.position + new Vector3(0, -1f, 0), Quaternion.identity);
             }
         }
@@ -188,14 +191,37 @@ public class PlayerController : MonoBehaviour
             cheatMode = !cheatMode;
             if (cheatMode)
             {
+                PlayerHealth.Instance.HP.Maximize();
                 PlayerStats.Instance.MP.Maximize();
             }
+        }
+        if (Input.GetKeyDown("3"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
 
 
-    // ================================== CHEAT ==================================
-    
+    // ================================== Knock Back ==================================
+    [SerializeField] float knockBackForce = 10;
+    [SerializeField] float knockBackDuration = 0.3f;
+    bool beingKnockedBack = false;
+    public IEnumerator KnockBack(int horizontalDirection=0)
+    {
+        if (!beingKnockedBack)
+        {
+            beingKnockedBack = true;
+            AddMoveRestrict();
+            rb.velocity = Vector2.zero;
+            yield return null;
+            rb.AddForce(new Vector2(horizontalDirection, 0.5f) * knockBackForce, ForceMode2D.Impulse);
+            yield return new WaitForSeconds(knockBackDuration);
+
+            RemoveMoveRestrict();
+            rb.velocity = Vector2.zero;
+            beingKnockedBack = false;
+        }
+    }
 
 
 }

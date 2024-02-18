@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2291443364236929014}
   - component: {fileID: 4532279236911351996}
   - component: {fileID: 825207001428120810}
+  - component: {fileID: 6848657990951746911}
   m_Layer: 7
   m_Name: Leaf Bird
   m_TagString: Enemy
@@ -75,10 +76,10 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 440553025
-  m_SortingLayer: 2
+  m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.23412599, g: 0.4264151, b: 0.25996467, a: 1}
+  m_Sprite: {fileID: 1706871846, guid: 1ef887ecc2394f540bf811d92b00420a, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -124,7 +125,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.25, y: 1}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -185,7 +186,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2897e74395edc7b458ab7aec5b0e2833, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  alive: 1
+  canRespawn: 1
   flySpeed: 4
   obstacleCheckLayerMask:
     serializedVersion: 2
     m_Bits: 72
+--- !u!95 &6848657990951746911
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3597217523545676041}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: bebb386f77dc20c4292c5e9fbfaf44a4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

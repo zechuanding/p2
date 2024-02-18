@@ -12,6 +12,7 @@ public class PlayerHealth : MonoBehaviour
     public bool IsAlive() {  return alive; }
 
     SpriteRenderer sr;
+    Rigidbody2D rb;
 
     public GameObject checkPoint;
 
@@ -36,6 +37,7 @@ public class PlayerHealth : MonoBehaviour
     {
         EventBus.Subscribe<PlayerTriggerEvent>(OnPlayerHitboxTriggerd);
         sr = GetComponent<SpriteRenderer>();
+        rb = GetComponent<Rigidbody2D>();
 
         // Set the intial check point
         checkPoint = GameObject.Find("Check Point 0");
@@ -46,6 +48,11 @@ public class PlayerHealth : MonoBehaviour
         if (alive && HP.Get() <= 0)
         {
             StartCoroutine(Dying());
+        }
+
+        if (transform.position.y < -50 || Input.GetKeyDown("2"))
+        {
+            Respawn();
         }
     }
 
@@ -59,6 +66,8 @@ public class PlayerHealth : MonoBehaviour
             {
                 HP.Add(-1);
                 StartCoroutine(DamageFlash());
+                int knockBackDirection = (e.collision.transform.position.x < transform.position.x) ? 1 : -1;
+                StartCoroutine(PlayerController.Instance.KnockBack(knockBackDirection));
             }
         }
         else if (e.collision.CompareTag("Acid") || e.collision.CompareTag("Beam"))
@@ -80,6 +89,8 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
+    
+
 
     IEnumerator DamageFlash()
     {
@@ -99,8 +110,9 @@ public class PlayerHealth : MonoBehaviour
     {
         Debug.Log("You Died!");
         alive = false;
+        rb.velocity = Vector2.zero;
         PlayerController.Instance.AddMoveRestrict();
-        transform.Rotate(0, 0, 90 * -PlayerController.Instance.facing.x);
+        transform.Rotate(0, 0, 90 * PlayerController.Instance.facing.x);
         yield return new WaitForSeconds(1.5f);
         Respawn();
     }
@@ -113,6 +125,7 @@ public class PlayerHealth : MonoBehaviour
         PlayerStats.Instance.LoadStats();
         transform.position = checkPoint.transform.position;
         transform.rotation = new Quaternion(0, 0, 0, 0);
+        rb.velocity = Vector2.zero;
         alive = true;
 
         EventBus.Publish(new PlayerRespawnEvent());

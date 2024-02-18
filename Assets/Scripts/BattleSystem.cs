@@ -20,7 +20,7 @@ public class BattleSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        if (controller.GetCanMove() && (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.J)))
         {
             StartCoroutine(Attack());
         }
@@ -38,7 +38,7 @@ public class BattleSystem : MonoBehaviour
             attack = attackLeft;
         }
 
-        Debug.Log("Player facing is " + controller.facing);
+        //Debug.Log("Player facing is " + controller.facing);
         if (attack != null)
         {
             attack.SetActive(true);

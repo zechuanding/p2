@@ -27,7 +27,7 @@ public class CreatureHealth : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player Attack"))
+        if (behaviour.alive && collision.CompareTag("Player Attack"))
         {
             health -= 5;
             StartCoroutine(DamageFlash());
@@ -38,9 +38,9 @@ public class CreatureHealth : MonoBehaviour
     IEnumerator DamageFlash()
     {
         for (int i = 0; i < 2; i++) {
-            sr.color *= 2;
+            sr.color = new Color(1,1,1,0.4f);
             yield return new WaitForSeconds(0.1f);
-            sr.color /= 2;
+            sr.color = new Color(1, 1, 1, 1);
             yield return new WaitForSeconds(0.1f);
         }
         

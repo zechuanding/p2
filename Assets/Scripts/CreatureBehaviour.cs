@@ -38,6 +38,8 @@ public class CreatureBehaviour : MonoBehaviour
         {
             rb.velocity = Vector2.zero;
         }
+
+        sr.flipX = direction.x < 0;
     }
 
     public virtual void Move() { }
