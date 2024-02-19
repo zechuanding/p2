@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Collector : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class Collector : MonoBehaviour
                 Destroy(collision.gameObject);
                 string[] messageList = new string[] {
                     "You acquired a new skill: Aurora Platform",
-                    "Press DOWN or K to create a platform",
+                    "When in the air, right click or press DOWN to create a platform",
                     "It will cost your MP, so use wisely"
                 };
                 EventBus.Publish(new UIEvent(messageList));
@@ -33,6 +34,11 @@ public class Collector : MonoBehaviour
                 PlayerStats.Instance.MP.Maximize();
                 EventBus.Publish(new UIEvent(new string[] {"MP limit increased!"}));
                 Destroy(collision.gameObject);
+            }
+
+            else if (collision.name == "Replay")
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
         }
     }

@@ -20,7 +20,7 @@ public class BattleSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (controller.GetCanMove() && (Input.GetKeyDown(KeyCode.X) || Input.GetKeyDown(KeyCode.J)))
+        if (controller.GetCanMove() && (Input.GetKeyDown(KeyCode.X) || Input.GetMouseButtonDown(0)))
         {
             StartCoroutine(Attack());
         }

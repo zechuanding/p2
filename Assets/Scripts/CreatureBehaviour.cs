@@ -22,7 +22,7 @@ public class CreatureBehaviour : MonoBehaviour
     }
 
 
-    protected void Start()
+    public virtual void Start()
     {
         RecordInitialStatus();
         EventBus.Subscribe<PlayerRespawnEvent>(Respawn);
@@ -38,8 +38,7 @@ public class CreatureBehaviour : MonoBehaviour
         {
             rb.velocity = Vector2.zero;
         }
-
-        sr.flipX = direction.x < 0;
+        
     }
 
     public virtual void Move() { }
@@ -47,11 +46,12 @@ public class CreatureBehaviour : MonoBehaviour
 
 
 
-    Vector3 initialPosition, initialDirection;
+    Vector3 initialPosition, initialDirection, initialScale;
     int initialHealth;
     protected void RecordInitialStatus()
     {
         initialPosition = transform.position;
+        initialScale = transform.localScale;
         initialDirection = direction;
         if (ch != null)
         {
@@ -65,6 +65,7 @@ public class CreatureBehaviour : MonoBehaviour
         if (canRespawn)
         {
             transform.position = initialPosition;
+            transform.localScale = initialScale;
             direction = initialDirection;
             sr.enabled = true;
             if (ch != null)
@@ -74,5 +75,12 @@ public class CreatureBehaviour : MonoBehaviour
             canMove = true;
             alive = true;
         }
+    }
+
+    public void Flip()
+    {
+        Vector3 scale = transform.localScale;
+        scale.x *= -1;
+        transform.localScale = scale;
     }
 }

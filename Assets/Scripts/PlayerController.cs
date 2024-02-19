@@ -166,7 +166,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundLayerMask;
     void CreatePlatform()
     {
-        if (canMove & hasPlatformAbility && (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.K)) && !Physics2D.Raycast(transform.position, Vector2.down, 1.5f, groundLayerMask))
+        if (canMove & hasPlatformAbility && (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetMouseButtonDown(1)) && !Physics2D.Raycast(transform.position, Vector2.down, 1.5f, groundLayerMask))
         {
             int platformCost = 25;
 

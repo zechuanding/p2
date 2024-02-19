@@ -19,10 +19,7 @@ public class CreatureHealth : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (health <= 0)
-        {
-            Dies();
-        }
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -32,6 +29,10 @@ public class CreatureHealth : MonoBehaviour
             health -= 5;
             StartCoroutine(DamageFlash());
             PlayerStats.Instance.MP.Add(25);
+            if (health <= 0)
+            {
+                Dies();
+            }
         }
     }
 
@@ -46,7 +47,7 @@ public class CreatureHealth : MonoBehaviour
         
     }
 
-    void Dies()
+    public virtual void Dies()
     {
         behaviour.alive = false;
         sr.enabled = false;

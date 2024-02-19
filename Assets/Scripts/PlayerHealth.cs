@@ -61,7 +61,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (e.collision.CompareTag("Enemy"))
         {
-            Debug.Log("Player's Hitbox has hit an enemy!");
+            //Debug.Log("Player's Hitbox has hit an enemy!");
             if (!invincible && !PlayerController.Instance.cheatMode && e.collision.gameObject.GetComponent<CreatureBehaviour>().alive)
             {
                 HP.Add(-1);

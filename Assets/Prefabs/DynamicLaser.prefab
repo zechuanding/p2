@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   beam: {fileID: 8348414187568993043}
-  speed: 0.05
+  speed: 3
   layerMask:
     serializedVersion: 2
     m_Bits: 8

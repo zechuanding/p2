@@ -27,6 +27,7 @@ public class DryadBehaviour : CreatureBehaviour
         if (Physics2D.Raycast(transform.position, direction, 0.55f, WallCheckLayerMask) || !Physics2D.Raycast(transform.position + direction * 0.5f, Vector3.down, 0.6f, groundCheckLayerMask))
         {
             direction = -direction;
+            Flip();
         }
     }
 }

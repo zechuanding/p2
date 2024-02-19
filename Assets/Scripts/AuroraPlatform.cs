@@ -13,6 +13,7 @@ public class AuroraPlatform : MonoBehaviour
     {
         sr = GetComponent<SpriteRenderer>();
         StartCoroutine(PlatformLifeCycle());
+        EventBus.Subscribe<PlayerRespawnEvent>(OnPlayerRespawn);
     }
 
     IEnumerator PlatformLifeCycle()
@@ -26,6 +27,11 @@ public class AuroraPlatform : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
         
+        Destroy(gameObject);
+    }
+
+    void OnPlayerRespawn(PlayerRespawnEvent e)
+    {
         Destroy(gameObject);
     }
 }
