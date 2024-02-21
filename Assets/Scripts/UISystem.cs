@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,7 @@ public class UISystem : MonoBehaviour
 
     [SerializeField] Text healthText;
     [SerializeField] Text guideText;
+    [SerializeField] Image guideBackground;
     [SerializeField] Image MPBar;
     float MPFraction;
 
@@ -24,6 +26,7 @@ public class UISystem : MonoBehaviour
     void Start()
     {
         guideText.text = "";
+        guideBackground.enabled = false;
     }
 
     int HP;
@@ -60,13 +63,18 @@ public class UISystem : MonoBehaviour
     }
     IEnumerator DisplayGuide(UIEvent e)
     {
+        if (!e.temporal)
+        {
+            PlayerController.Instance.AddMoveRestrict();
+            guideBackground.enabled = true;
+        }
+
+        guideBackground.color = new Color(0, 0, 0, 0);
         guideText.color = new Color(1, 1, 1, 0);
+
         for (int i = 0; i < e.eventText.Length; i++)
         {
             guideText.text = e.eventText[i];
-            if (!e.temporal)
-                guideText.text += "\n\n~Press ENTER to continue~";
-
 
             Debug.Log("displaying message "+i);
 
@@ -74,6 +82,8 @@ public class UISystem : MonoBehaviour
             for (int a = 0; a < 10; a++)
             {
                 guideText.color += new Color(0, 0, 0, 0.1f);
+                if (i == 0)
+                    guideBackground.color += new Color(0, 0, 0, 0.05f);
                 yield return null;
                 yield return null;
             }
@@ -87,7 +97,10 @@ public class UISystem : MonoBehaviour
                 while (true)
                 {
                     yield return null;
-                    if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Return)) { break; }
+                    if (Input.GetButtonUp("Jump") || Input.GetButtonDown("Attack")) 
+                    {
+                        break; 
+                    }
                 }
             }
             
@@ -95,12 +108,18 @@ public class UISystem : MonoBehaviour
             for (int a = 0; a < 10; a++)
             {
                 guideText.color += new Color(0, 0, 0, -0.1f);
+                if (i == e.eventText.Length-1)
+                    guideBackground.color += new Color(0, 0, 0, -0.06f);
                 yield return null;
                 yield return null;
             }
         }
-        
+
+        if (!e.temporal)
+            PlayerController.Instance.RemoveMoveRestrict();
+
         guideText.text = "";
+        guideBackground.enabled = false;
     }
 }
 

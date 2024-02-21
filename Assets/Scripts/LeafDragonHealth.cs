@@ -15,6 +15,15 @@ public class LeafDragonHealth : CreatureHealth
     }
 
 
+    //HealthBar
+    private void Update()
+    {
+        if ((PlayerController.Instance.transform.position - transform.position).magnitude < 16)
+        {
+
+        }
+    }
+
     IEnumerator FadeOut()
     {
         SpriteRenderer sr = GetComponent<SpriteRenderer>();

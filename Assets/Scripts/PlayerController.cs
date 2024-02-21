@@ -74,11 +74,10 @@ public class PlayerController : MonoBehaviour
     }
 
     // ================================== MOVE RESTRICTIONS ==================================
-    public void AddMoveRestrict() { numMoveRestricts++; }
+    public void AddMoveRestrict() { numMoveRestricts++; rb.velocity = new Vector2(0, rb.velocity.y); }
     public void RemoveMoveRestrict() { numMoveRestricts--; }
     public void ClearAllMoveRestrict() { numMoveRestricts = 0; }
-
-
+    public void StopMovement() { rb.velocity = new (0, rb.velocity.y); }
 
     // ================================== WALK ==================================
     void GetInputs()

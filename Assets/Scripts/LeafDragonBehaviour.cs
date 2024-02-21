@@ -49,12 +49,14 @@ public class LeafDragonBehaviour : CreatureBehaviour
         }   
     }
 
-    public override void Respawn(PlayerRespawnEvent e)
+    public override void ResetCreature(PlayerRespawnEvent e)
     {
         // Only reset the boss if it is alive, other wise never reset it
         if (alive)
         {
-            base.Respawn(e);
+            base.ResetCreature(e);
+            Debug.Log("Initial position: " + initialPosition);
+            Debug.Log("Dragon Resetted to " + transform.position);
             bossFightStart = false;
             StartCoroutine(WaitUntilPlayerNearby());
         }
@@ -65,7 +67,7 @@ public class LeafDragonBehaviour : CreatureBehaviour
         while (true)
         {
             yield return null;
-            if ((PlayerController.Instance.transform.position -  transform.position).magnitude < 16)
+            if ((PlayerController.Instance.transform.position -  transform.position).magnitude < 18)
             {
                 bossFightStart = true;
                 break;

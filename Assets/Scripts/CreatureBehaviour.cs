@@ -25,7 +25,7 @@ public class CreatureBehaviour : MonoBehaviour
     public virtual void Start()
     {
         RecordInitialStatus();
-        EventBus.Subscribe<PlayerRespawnEvent>(Respawn);
+        EventBus.Subscribe<PlayerRespawnEvent>(ResetCreature);
     }
 
     public virtual void Update()
@@ -46,7 +46,7 @@ public class CreatureBehaviour : MonoBehaviour
 
 
 
-    Vector3 initialPosition, initialDirection, initialScale;
+    protected Vector3 initialPosition, initialDirection, initialScale;
     int initialHealth;
     protected void RecordInitialStatus()
     {
@@ -60,7 +60,7 @@ public class CreatureBehaviour : MonoBehaviour
     }
 
 
-    public virtual void Respawn(PlayerRespawnEvent e)
+    public virtual void ResetCreature(PlayerRespawnEvent e)
     {
         if (canRespawn)
         {
@@ -74,6 +74,7 @@ public class CreatureBehaviour : MonoBehaviour
             }
             canMove = true;
             alive = true;
+            rb.velocity = Vector2.zero;
         }
     }
 

@@ -22,7 +22,7 @@ public class Collector : MonoBehaviour
                 Destroy(collision.gameObject);
                 string[] messageList = new string[] {
                     "You acquired a new skill: Aurora Platform",
-                    "When in the air, right click or press DOWN to create a platform",
+                    "When in the air, use [Right Mouse Button] or [Down Arrow] to create a platform",
                     "It will cost your MP, so use wisely"
                 };
                 EventBus.Publish(new UIEvent(messageList));

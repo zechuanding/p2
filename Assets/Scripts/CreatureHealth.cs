@@ -6,6 +6,7 @@ using UnityEngine;
 public class CreatureHealth : MonoBehaviour
 {
     [SerializeField] public int health = 20;
+    public int maxHealth;
     SpriteRenderer sr;
     CreatureBehaviour behaviour;
 
@@ -14,13 +15,9 @@ public class CreatureHealth : MonoBehaviour
     {
         sr = GetComponent<SpriteRenderer>();
         behaviour = GetComponent<CreatureBehaviour>();
+        maxHealth = health;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
