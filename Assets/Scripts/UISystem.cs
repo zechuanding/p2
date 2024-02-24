@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,9 +15,18 @@ public class UISystem : MonoBehaviour
 
     [SerializeField] Image[] heartArray;
 
-
+    // Singleton
+    public static UISystem Instance;
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
         EventBus.Subscribe<UIEvent>(DisplayGuideWrapper);
     }
 

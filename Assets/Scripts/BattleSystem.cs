@@ -48,10 +48,12 @@ public class BattleSystem : MonoBehaviour
         else if (controller.facing == Vector3.right)
         {
             attack = attackRight;
+            attack.transform.localScale = new Vector3(1, 1, 1);
         }
         else if (controller.facing == Vector3.left)
         {
-            attack = attackLeft;
+            attack = attackRight;
+            attack.transform.localScale = new Vector3(-1, 1, 1);
         }
 
         //Debug.Log("Player facing is " + controller.facing);
@@ -61,7 +63,7 @@ public class BattleSystem : MonoBehaviour
             lastAttackTime = Time.time;
             
             // Slash duration
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.14f);
             attack.SetActive(false);
         }
         

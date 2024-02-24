@@ -9,6 +9,7 @@ public class AuroraSupply : MonoBehaviour
         if (collision.CompareTag("Player Attack"))
         {
             PlayerStats.Instance.MP.Add(25);
+            EventBus.Publish<ParticleEvent>(new ParticleEvent(Vector3.Lerp(collision.transform.position, transform.position, 0.8f), ParticleEvent.particleT.SPARK));
         }
     }
 }

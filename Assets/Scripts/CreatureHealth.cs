@@ -30,6 +30,9 @@ public class CreatureHealth : MonoBehaviour
             {
                 Dies();
             }
+
+            // Generate particle effect
+            EventBus.Publish<ParticleEvent>(new ParticleEvent(Vector3.Lerp(collision.transform.position, transform.position, 0.8f), ParticleEvent.particleT.SPARK));
         }
     }
 
